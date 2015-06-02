@@ -1,42 +1,56 @@
-var NYmapData = {
-	lat: 41.057,
-	lng: -73.844,
-	zoom: 11
+var NYMap = {
+	lat: 40.87,
+	lng: -73.854,
+	zoom: 12,
+	NYMarkers: [{
+		name: "Montefiore Moses Campus",
+		lat: 40.880151,
+		lng: -73.879765,
+		},
+		{
+		name: "Montefiore Weiler Campus",
+		lat: 40.849066,
+		lng: -73.845836,
+		},
+		{
+		name: "Montefiore Wakefield Campus",
+		lat: 40.893753,
+		lng: -73.861124,
+		}
+	]
 }
 
-var NYmarkers = [{
-	name: "Rando1",
-	lat: 41.12,
-	lng: -73.6
-	},
-	{
-	name: "Rando2",
-	lat: 41.13,
-	lng: -73.61
-	}
-]
+var model = function(data) {
+	this.lat = ko.observable(data.lat);
+	this.lng = ko.observable(data.lng);
+	this.zoom = ko.observable(data.zoom);
+	this.markers = ko.observableArray(data.NYMarkers);
+	
+}
 
 var viewModel = function() {
 	self = this;
 
-	this.map = ko.observable(NYmapData);
-	this.markers = ko.observable(NYmarkers);
+	searchBox = ko.observable("");
+	mapData = new model(NYMap);
 
 	self.myMap = ko.observable({
-		lat: this.map().lat,
-		lng: this.map().lng,
-		zoom: this.map().zoom,
-		markers: this.markers()
+		lat: mapData.lat(),
+		lng: mapData.lng(),
+		zoom: mapData.zoom(),
+		markers: mapData.markers(),
+		visibility: null
 	});
 }
 
+
 ko.bindingHandlers.map = {
 	//create mapview centered over specified area
-	init: function(element, valueAccesor) {
+	update: function(element, valueAccesor) {
 		var lat = ko.utils.unwrapObservable(valueAccesor()).lat;
 		var lng = ko.utils.unwrapObservable(valueAccesor()).lng;
 		var zoom = ko.utils.unwrapObservable(valueAccesor()).zoom;
-		var markers =  ko.utils.unwrapObservable(valueAccesor()).markers;
+		var markers = ko.utils.unwrapObservable(valueAccesor()).markers;
 		var mapOptions = {
 		center: {lat, lng},
 		zoom: zoom,
