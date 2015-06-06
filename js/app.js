@@ -6,16 +6,19 @@ var NYMap = {
 		name: "Montefiore Moses Campus",
 		lat: 40.880151,
 		lng: -73.879765,
+		vis: true
 		},
 		{
 		name: "Montefiore Weiler Campus",
 		lat: 40.849066,
 		lng: -73.845836,
+		vis: true
 		},
 		{
 		name: "Montefiore Wakefield Campus",
 		lat: 40.893753,
 		lng: -73.861124,
+		vis: true
 		}
 	]
 }
@@ -24,12 +27,22 @@ var model = function(data) {
 	this.lat = ko.observable(data.lat);
 	this.lng = ko.observable(data.lng);
 	this.zoom = ko.observable(data.zoom);
-	this.markers = ko.observableArray(data.NYMarkers);
+	this.vis = ko.observable(data.vis);
+	this.markers = ko.computed(function() { 
+	 for (marker in data.NYMarkers) {	
+	 	if (searchBox() === "d" || searchBox() === data.NYMarkers[marker].name) {
+	 		data.NYMarkers[marker].vis = false;
+	 	}}
+	 	return data.NYMarkers;
+	});
 	
 }
 
 var viewModel = function() {
 	self = this;
+	this.counter = function() {
+		console.log(3);
+	};
 
 	searchBox = ko.observable("");
 	mapData = new model(NYMap);
@@ -39,7 +52,7 @@ var viewModel = function() {
 		lng: mapData.lng(),
 		zoom: mapData.zoom(),
 		markers: mapData.markers(),
-		visibility: null
+		vis: mapData.vis()
 	});
 }
 
@@ -50,11 +63,11 @@ ko.bindingHandlers.map = {
 		var lat = ko.utils.unwrapObservable(valueAccesor()).lat;
 		var lng = ko.utils.unwrapObservable(valueAccesor()).lng;
 		var zoom = ko.utils.unwrapObservable(valueAccesor()).zoom;
+		var latLng = new google.maps.LatLng(parseFloat(lat),parseFloat(lng));
 		var markers = ko.utils.unwrapObservable(valueAccesor()).markers;
 		var mapOptions = {
-		center: {lat, lng},
-		zoom: zoom,
-		streetViewControl: true
+			center: latLng,
+			zoom: zoom
 		};
 		var map = new google.maps.Map(element,mapOptions);
 
@@ -64,14 +77,16 @@ ko.bindingHandlers.map = {
 				parseFloat(location.lng));
 			var marker = new google.maps.Marker({
 				position: markerLatLng,
-				map: map
+				map: map,
 			})
+			marker.setVisible(location.vis);
 		};
 
 		//itterates over all markers in array
 		markers.forEach(function(e) {
 			makeMarker(e)
 		});
+
 	}
 }
 
