@@ -7,6 +7,9 @@
 	<body>
 		<div>
 			<p>Search: <input data-bind="textInput: searchBox"/></p>
+			<ul id="site-list" data-bind="foreach: myMap.markers()">
+        		<li data-bind="visible: vis, text: name"></li>
+    </ul>
 		</div>
 		<div id="map-canvas" data-bind="mapper: myMap"></div>
 		<script type="text/javascript" 

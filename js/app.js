@@ -26,6 +26,7 @@ var NYMap = {
 var model = function(data) {
 	this.lat = ko.observable(data.lat);
 	this.lng = ko.observable(data.lng);
+	this.latLng = new google.maps.LatLng(this.lat(), this.lng());
 	this.zoom = ko.observable(data.zoom);
 	this.markers = ko.computed(function() {
 		var searchLen = searchBox().length;
@@ -36,6 +37,7 @@ var model = function(data) {
 			e.vis(false);
 		});
 		return data.NYMarkers},this);
+
 }
 
 var viewModel = function() { 
@@ -46,27 +48,23 @@ var viewModel = function() {
 }
 
 ko.bindingHandlers.mapper = {
-	
-	update: function(element, valueAccessor) {
-		var mapData = ko.unwrap(valueAccessor());
-		var zoom = mapData.zoom();
-		var latLng = new google.maps.LatLng(mapData.lat(), mapData.lng());
-        var mapOptions = {
-          center: latLng,
-          zoom: zoom
-        };
-
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
         
+	update: function(element, valueAccessor) {        
+        mapData = ko.utils.unwrapObservable(valueAccessor());
+
+		map = ko.observable(new google.maps.Map(element,
+            {center: mapData.latLng, zoom: mapData.zoom()}));
+
         mapData.markers().forEach(function(e) {
         	var markerLatLng = new google.maps.LatLng(e.lat(), e.lng());
         	var marker = new google.maps.Marker({
         		position: markerLatLng,
-        		map: map});
+        		draggable: true,
+        		title: e.name,
+        		map: map()});
         	marker.setVisible(e.vis());
     	});
-	}
+   	}
 };
 
 ko.applyBindings(new viewModel());
