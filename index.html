@@ -8,8 +8,10 @@
 		<div>
 			<p>Search: <input data-bind="textInput: this.searchBox"/></p>
 		</div>
-		<div id="map-canvas" data-bind="map: myMap"></div>
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?AIzaSyDBSdDbO_t_2Ay_2BbNgsFu6_1zSxPE61o">
+		<div id="map-canvas" data-bind="mapper: myMap"></div>
+		<script type="text/javascript" 
+			src="https://maps.googleapis.com/maps/
+			api/js?key=AIzaSyDBSdDbO_t_2Ay_2BbNgsFu6_1zSxPE61o">
 		</script>
 		<script src="js/lib/knockout-3.2.0.js"></script>
 		<script src="js/app.js"></script>
