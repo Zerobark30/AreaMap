@@ -1,3 +1,4 @@
+//JSON data objects with map settings and marker settings
 var NYMap = {
 	lat: 40.87,
 	lng: -73.854,
@@ -29,12 +30,16 @@ var NYMap = {
 	]
 }
 
+//model of data for map object
 var model = function(data) {
+	//variables to be used by map object
 	this.lat = ko.observable(data.lat);
 	this.lng = ko.observable(data.lng);
 	this.latLng = new google.maps.LatLng(this.lat(), this.lng());
 	this.zoom = ko.observable(data.zoom);
 
+	//computed observable that sets markers to visible or not
+	//based on status of search bar
 	this.markers = ko.computed(function() {
 		var searchLen = searchBox().length;
 		data.NYMarkers.forEach(function(e){
@@ -45,6 +50,7 @@ var model = function(data) {
 		});
 		return data.NYMarkers},this);
 
+	//AJAX request to get NYT articles about locations
 	this.articles = ko.computed(function() {
 		data.NYMarkers.forEach(function(e) {
 			$.getJSON('http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + e.name +
@@ -67,22 +73,28 @@ var model = function(data) {
 
 }
 
+//viewModel
 var viewModel = function() { 
 	var self = this;
 
+	//variable to receive data from search value
 	searchBox = ko.observable("");
+
+	//map object
 	myMap = new model(NYMap);
 
 }
 
 ko.bindingHandlers.mapper = {
-        
+    //Creates initial map object as a custom binding
+    //and updates the map every time one of the associated values changes    
 	update: function(element, valueAccessor) {        
         mapData = ko.utils.unwrapObservable(valueAccessor());
 
 		map = ko.observable(new google.maps.Map(element,
             {center: mapData.latLng, zoom: mapData.zoom()}));
 
+		//sets the location, animation and infoWindow values for markers
         mapData.markers().forEach(function(e) {
         	var content = "<div><h3>" + e.name + "</h3><ul>" + 
         		e.infoWindow() + "</ul><div>";
@@ -101,4 +113,5 @@ ko.bindingHandlers.mapper = {
    	}
 };
 
+//instantiate the viewModel
 ko.applyBindings(new viewModel());
