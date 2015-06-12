@@ -28,7 +28,7 @@ var NYMap = {
 		infoWindow: ko.observable("")
 		}
 	]
-}
+};
 
 //model of data for map object
 var model = function(data) {
@@ -48,14 +48,14 @@ var model = function(data) {
 		else
 			e.vis(false);
 		});
-		return data.NYMarkers},this);
+		return data.NYMarkers;},this);
 
 	//AJAX request to get NYT articles about locations
 	this.articles = ko.computed(function() {
 		data.NYMarkers.forEach(function(e) {
 			$.getJSON('http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + e.name +
 				'&api-key=0e6f14d30901c77cfe709f5ee430b971:10:72003949', function(NYTdata) {
-	            for (i in NYTdata.response.docs) {
+	            for (var i in NYTdata.response.docs) {
 	            	if (i < 3) {
 	                	e.infoWindow(e.infoWindow() + "<li><a href=" +
 	                	NYTdata.response.docs[i].web_url + ">" +
@@ -65,25 +65,23 @@ var model = function(data) {
 	            	else
 	            		break;
 	            }
-        	}).error(function(e) {
-            	e.infoWindow("<li>New York Times Articles Could Not Be Loaded</li>");
+        	}).error(function(i) {
+            	e.infoWindow(e.infoWindow() + 
+            		"<li>New York Times Articles Could Not Be Loaded</li>");
         	});
     	});
 	},this);
-
-}
+};
 
 //viewModel
 var viewModel = function() { 
-	var self = this;
 
 	//variable to receive data from search value
 	searchBox = ko.observable("");
 
 	//map object
 	myMap = new model(NYMap);
-
-}
+};
 
 ko.bindingHandlers.mapper = {
     //Creates initial map object as a custom binding
@@ -94,11 +92,12 @@ ko.bindingHandlers.mapper = {
 		map = ko.observable(new google.maps.Map(element,
             {center: mapData.latLng, zoom: mapData.zoom()}));
 
+		infoWindow = new google.maps.InfoWindow();
+
 		//sets the location, animation and infoWindow values for markers
         mapData.markers().forEach(function(e) {
         	var content = "<div><h3>" + e.name + "</h3><ul>" + 
         		e.infoWindow() + "</ul><div>";
-        	var infoWindow = new google.maps.InfoWindow({content: content});
         	var markerLatLng = new google.maps.LatLng(e.lat(), e.lng());
         	var marker = new google.maps.Marker({
         		position: markerLatLng,
@@ -107,6 +106,7 @@ ko.bindingHandlers.mapper = {
         	marker.setVisible(e.vis());
         	        	
         	google.maps.event.addListener(marker, 'click', function() {
+        		infoWindow.setContent(content);
         		infoWindow.open(map(),marker);
         	});
     	});

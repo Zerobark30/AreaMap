@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<style type="text/css"> html, body, #map-canvas {height:100%; margin: 0 padding: 0;}
-		</style>
+		<style type="text/css"> html, body, #map-canvas {height: 90%;
+			margin: 0; padding: 0; font-size: 1rem;}</style>
+		<script src="js/lib/jquery.min.js"></script>
+		<script type="text/javascript" src="js/lib/bootstrap.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1,
+			maximum-scale=1, user-scalable=no">
 	</head>
 	<body>
-		<div>
-			<p>Search: <input data-bind="textInput: searchBox"/></p>
-			<ul id="site-list" data-bind="foreach: myMap.markers()">
-        		<li data-bind="visible: vis, text: name"></li>
-    </ul>
+		<div class="container">
+			<div class = "row">
+				<div class = "col-md-6">
+					<p>Search: <input data-bind="textInput: searchBox"/></p>
+				</div>
+			</div>
+			<div class = "row">
+				<div class = "col-md-6">
+					<ul id="site-list" data-bind="foreach: myMap.markers()">
+	        			<li data-bind="visible: vis, text: name"></li>
+	    			</ul>
+	    		</div>
+			</div>
+				
 		</div>
 		<div id="map-canvas" data-bind="mapper: myMap"></div>
 		<script type="text/javascript" 
@@ -17,7 +30,6 @@
 			api/js?key=AIzaSyDBSdDbO_t_2Ay_2BbNgsFu6_1zSxPE61o">
 		</script>
 		<script src="js/lib/knockout-3.2.0.js"></script>
-		<script src="js/lib/jquery.min.js"></script>
 		<script src="js/app.js"></script>
 	</body>
 </html>
