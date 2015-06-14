@@ -37,6 +37,7 @@ var model = function(data) {
 	this.lng = ko.observable(data.lng);
 	this.latLng = new google.maps.LatLng(this.lat(), this.lng());
 	this.zoom = ko.observable(data.zoom);
+	this.state = ko.observable(Offline.state);
 
 	//computed observable that sets markers to visible or not
 	//based on status of search bar
@@ -96,7 +97,7 @@ ko.bindingHandlers.mapper = {
 
 		//sets the location, animation and infoWindow values for markers
         mapData.markers().forEach(function(e) {
-        	var content = "<div><h3>" + e.name + "</h3><ul>" + 
+        	var content = '<div class="row online well"><h3>' + e.name + "</h3><ul>" + 
         		e.infoWindow() + "</ul><div>";
         	var markerLatLng = new google.maps.LatLng(e.lat(), e.lng());
         	var marker = new google.maps.Marker({
